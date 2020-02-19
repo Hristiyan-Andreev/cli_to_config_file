@@ -16,44 +16,31 @@ av_options = {
 }
 
 def avail_menu():
-    avail_options_promt = {
-        'type': 'list',
-        'name': 'avail_option',
-        'message': 'Avail duration options',
-        'choices': [av_options['enable_option'], av_options['duration_option']]
-    }
-
-    avail_options = pyq.prompt(avail_options_promt)
-
-    if avail_options['avail_option'] is av_options['enable_option']:
-
-        enable_options_promt = {
-        'type': 'list',
-        'name': 'enable_option',
-        'message': 'Do you want to enable minimum avail duration',
-        'choices': ['Yes', 'No']
-        }
-
-        enable_options = pyq.prompt(enable_options_promt)
-
-        #TODO: Call a function to write in the config file
-        if enable_options['enable_option'] is 'Yes':
-            print('Minimum avail duration Enabled')
-        elif enable_options['enable_option'] is 'No':
-            print('Minimum avail duration Disabled')
-
-    elif avail_options['avail_option'] is av_options['duration_option']:
-        duration_option_promt = {
+    avail_options_promt = [
+        {
+            'type': 'list',
+            'name': 'avail_option',
+            'message': 'Avail duration options',
+            'choices': [av_options['enable_option'], av_options['duration_option']]
+        },
+        {
+            'type': 'list',
+            'name': 'enable_option',
+            'message': 'Do you want to enable minimum avail duration',
+            'choices': ['Yes', 'No'],
+            'when': lambda avail_options: avail_options['avail_option'] is av_options['enable_option']
+        },
+        {
             'type': 'input',
             'name': 'avail_duration',
             'message': 'Enter the minimum avail duration in seconds',
-            # 'default': 3,
+            'when': lambda avail_options: avail_options['avail_option'] is av_options['duration_option'],
             'filter': lambda val: float(val)
         }
+    ]
 
-        duration_option = pyq.prompt(duration_option_promt)
-        print(duration_option['avail_duration'])
-        
+    avail_options = pyq.prompt(avail_options_promt)
+   
 
 def main_menu():
     main_options_promt = {
