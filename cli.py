@@ -2,52 +2,82 @@ import click as cl
 import PyInquirer as pyq
 import sys
 
+import validators as val
+
 
 # Dict of main menu options - to avoid using strings in the whole program
-mm_options = {
-    'stream_option': 'Stream-GPI pairs\n',
-    'avail_option': 'Minimum avail duration\n'
+mm_choices = {
+    'elemental':'Elemental server - IP and credentials',
+    'stream': 'Stream-GPI pairs - number of streams and GPI mapping',
+    'avail': 'Minimum avail duration - Enable/Disable, Duration'
 
 }
 
-av_options = {
-    'enable_option': 'Enable minimum avail duration\n',
-    'duration_option': 'Set duration\n'
+av_choices = {
+    'enable': 'Enable minimum avail duration\n',
+    'duration': 'Set duration\n',
+    'dur_opt_valid': val.AvDurValidator
 }
 
-def avail_menu():
-    avail_options_promt = [
+el_choices = {
+    'ip': 'Enter Elemental Live server IP address',
+    'credentials': 'Enter the username and password for access'
+}
+
+def elemental_menu():
+    elemental_promt = [
         {
             'type': 'list',
-            'name': 'avail_option',
+            'name': 'elemental',
+            'message': 'Elemenal Live server options\n',
+            'choices': [el_choices['ip'], el_choices['credentials']]
+        },
+        {
+            'type': 'input',
+            'name': 'elemenal_ip',
+            'message': 'Enter the Elemenal Live server IP address - without port',
+            'validate': val.IpValidator,
+            'when': lambda elemental_answers: elemental_answers['elemental'] is el_choices['ip'],
+            'filter': lambda val: float(val)
+        },
+    ]
+
+    elemental_answers = pyq.prompt(elemental_promt)
+
+def avail_menu():
+    avails_promt = [
+        {
+            'type': 'list',
+            'name': 'avail',
             'message': 'Avail duration options',
-            'choices': [av_options['enable_option'], av_options['duration_option']]
+            'choices': [av_choices['enable'], av_choices['duration']]
         },
         {
             'type': 'list',
-            'name': 'enable_option',
+            'name': 'enable',
             'message': 'Do you want to enable minimum avail duration',
             'choices': ['Yes', 'No'],
-            'when': lambda avail_options: avail_options['avail_option'] is av_options['enable_option']
+            'when': lambda avails: avails['avail'] is av_choices['enable']
         },
         {
             'type': 'input',
             'name': 'avail_duration',
             'message': 'Enter the minimum avail duration in seconds',
-            'when': lambda avail_options: avail_options['avail_option'] is av_options['duration_option'],
+            'validate': av_choices['dur_opt_valid'],
+            'when': lambda avails: avails['avail'] is av_choices['duration'],
             'filter': lambda val: float(val)
         }
     ]
 
-    avail_options = pyq.prompt(avail_options_promt)
+    avails = pyq.prompt(avails_promt)
    
 
 def main_menu():
     main_options_promt = {
         'type': 'list',
         'name': 'main_option',
-        'message': 'What you want to configure?',
-        'choices': [ mm_options['stream_option'], mm_options['avail_option']]
+        'message': 'What you want to configure?\n',
+        'choices': [mm_choices['elemental'], mm_choices['stream'], mm_choices['avail']]
     }
 
     answers = pyq.prompt(main_options_promt)
@@ -58,9 +88,11 @@ def whole_menu():
     while(True):
         mm_answers = main_menu()
 
-        if mm_answers['main_option'] is mm_options['stream_option']:
+        if mm_answers['main_option'] is mm_choices['elemental']:
+            elemental_menu()
+        if mm_answers['main_option'] is mm_choices['stream']:
             print('Perkele!')
-        elif mm_answers['main_option'] is mm_options['avail_option']:
+        elif mm_answers['main_option'] is mm_choices['avail']:
             avail_menu()
 
 
