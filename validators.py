@@ -13,9 +13,10 @@ class AvDurValidator(Validator):
                 )
 
 class IpValidator(Validator):
-    ip_regex = re.compile(r'/d{0,3}./d{0,3}./d{0,3}./d{0,3}')
     def validate(self, document):
-        ip_ok = re.match(r'/d', document.text)
+        ip_regex = re.compile(r'(\d){1,3}.(\d){1,3}.(\d){1,3}.(\d){1,3}')
+        # ip_regex = re.compile(r'\d')
+        ip_ok = ip_regex.search(document.text)
         if not ip_ok:
             raise ValidationError(
                 message='Please enter a valid IP address',

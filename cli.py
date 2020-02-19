@@ -38,7 +38,7 @@ def elemental_menu():
             'message': 'Enter the Elemenal Live server IP address - without port',
             'validate': val.IpValidator,
             'when': lambda elemental_answers: elemental_answers['elemental'] is el_choices['ip'],
-            'filter': lambda val: float(val)
+            # 'filter': lambda val: float(val)
         },
     ]
 
