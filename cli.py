@@ -14,14 +14,15 @@ mm_choices = {
 }
 
 av_choices = {
-    'enable': 'Enable minimum avail duration\n',
-    'duration': 'Set duration\n',
-    'dur_opt_valid': val.AvDurValidator
+    'enable': 'Enable minimum avail duration',
+    'duration': 'Set duration',
+    'back': 'Go back'
 }
 
 el_choices = {
     'ip': 'Enter Elemental Live server IP address',
-    'credentials': 'Enter the username and password for access'
+    'credentials': 'Enter the username and password for access',
+    'back': 'Go back'
 }
 
 def elemental_menu():
@@ -30,11 +31,11 @@ def elemental_menu():
             'type': 'list',
             'name': 'elemental',
             'message': 'Elemenal Live server options\n',
-            'choices': [el_choices['ip'], el_choices['credentials']]
+            'choices': [el_choices['ip'], el_choices['credentials'], el_choices['back']]
         },
         {
             'type': 'input',
-            'name': 'elemenal_ip',
+            'name': 'elemental_ip',
             'message': 'Enter the Elemenal Live server IP address - without port',
             'validate': val.IpValidator,
             'when': lambda elemental_answers: elemental_answers['elemental'] is el_choices['ip'],
@@ -43,6 +44,8 @@ def elemental_menu():
     ]
 
     elemental_answers = pyq.prompt(elemental_promt)
+    if elemental_answers['elemental'] is el_choices['back']: return True
+    else: return 0
 
 def avail_menu():
     avails_promt = [
@@ -50,7 +53,7 @@ def avail_menu():
             'type': 'list',
             'name': 'avail',
             'message': 'Avail duration options',
-            'choices': [av_choices['enable'], av_choices['duration']]
+            'choices': [av_choices['enable'], av_choices['duration'], av_choices['back']]
         },
         {
             'type': 'list',
@@ -63,13 +66,16 @@ def avail_menu():
             'type': 'input',
             'name': 'avail_duration',
             'message': 'Enter the minimum avail duration in seconds',
-            'validate': av_choices['dur_opt_valid'],
+            'validate': val.AvDurValidator,
             'when': lambda avails: avails['avail'] is av_choices['duration'],
             'filter': lambda val: float(val)
         }
     ]
 
     avails = pyq.prompt(avails_promt)
+    if avails['avail'] is av_choices['back']: return True
+    else: return 0
+    
    
 
 def main_menu():
@@ -89,11 +95,17 @@ def whole_menu():
         mm_answers = main_menu()
 
         if mm_answers['main_option'] is mm_choices['elemental']:
-            elemental_menu()
+            while(True):
+                if elemental_menu(): break
+                
+
         if mm_answers['main_option'] is mm_choices['stream']:
             print('Perkele!')
+
         elif mm_answers['main_option'] is mm_choices['avail']:
-            avail_menu()
+            while(True):
+                if avail_menu(): break
+                
 
 
 if __name__ == '__main__':
