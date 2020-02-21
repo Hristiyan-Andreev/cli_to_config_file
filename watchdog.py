@@ -29,3 +29,7 @@ def watch_reload_func():
 
 reload_thread = th.Thread(target=watch_reload_func)
 reload_thread.start()
+
+import watchdog_class as wtd
+
+wtd.WatchDogReload()
