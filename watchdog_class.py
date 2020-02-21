@@ -12,7 +12,7 @@ class WatchDogReload(th.Thread):
         @check_interval: Time in seconds in between file change checks
         @linux: True if called on linux, false if called on windows
         '''
-
+        #TODO: Attach a logger
         th.Thread.__init__(self, name='watch_and_reload_thread', daemon=True)
         self.files = files_to_watch
         self.start_up_edit_times = [(f, getmtime(f)) for f in self.files]
