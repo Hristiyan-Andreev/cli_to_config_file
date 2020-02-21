@@ -4,6 +4,7 @@ import sys
 
 import validators as val
 
+EXIT_FLAG = 123
 
 # Dict of main menu options - to avoid using strings in the whole program
 mm_choices = {
@@ -25,6 +26,7 @@ el_choices = {
     'credentials': 'Enter the username and password for access',
     'back': 'Go back'
 }
+
 
 def elemental_menu():
     elemental_promt = [
@@ -61,10 +63,12 @@ def elemental_menu():
     ]
 
     elemental_answers = pyq.prompt(elemental_promt)
+
     if elemental_answers['elemental'] is el_choices['back']:
-        return True
+        return EXIT_FLAG
     else:
         return 0
+
 
 def avail_menu():
     avails_promt = [
@@ -93,11 +97,11 @@ def avail_menu():
     ]
 
     avails = pyq.prompt(avails_promt)
+
     if avails['avail'] is av_choices['back']:
-        return True
+        return EXIT_FLAG
     else:
         return 0
-    
    
 
 def main_menu():
@@ -110,7 +114,11 @@ def main_menu():
     }
 
     answers = pyq.prompt(main_options_promt)
-    return answers
+
+    if answers['main_option'] is mm_choices['back']:
+        return EXIT_FLAG
+    else:
+        return answers
     
 def whole_menu():
 
@@ -119,15 +127,17 @@ def whole_menu():
 
         if mm_answers['main_option'] is mm_choices['elemental']:
             while(True):
-                if elemental_menu(): break
-                
+                if elemental_menu() is EXIT_FLAG: break                
 
-        if mm_answers['main_option'] is mm_choices['stream']:
+        elif mm_answers['main_option'] is mm_choices['stream']:
             print('Perkele!')
 
         elif mm_answers['main_option'] is mm_choices['avail']:
             while(True):
-                if avail_menu(): break
+                if avail_menu() is EXIT_FLAG: break
+
+        elif mm_answers['main_option'] is EXIT_FLAG:
+            break
                 
 
 
