@@ -1,10 +1,1 @@
-{
-    "elemental_ip": "192.168.2.80",
-    "elemental_user": "admin",
-    "elemental_pass": null,
-    "gpi_to_stream_map": {
-        "15": 5
-    },
-    "min_avail_enabled": "True",
-    "min_avail_duration": 3 
-}
+{"elemental_ip": "192.168.2.15", "elemental_user": "admin", "elemental_pass": "pass", "gpi_to_stream_map": {"15": 5}, "min_avail_enabled": "True", "min_avail_duration": 3}
