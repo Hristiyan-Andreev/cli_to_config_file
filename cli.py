@@ -1,12 +1,34 @@
 import click as cl
 import PyInquirer as pyq
 import sys
+import json
 
 import validators as val
+from config_manager import ConfigManager
 
 EXIT_FLAG = 123
 
-# Dict of main menu options - to avoid using strings in the whole program
+# # Load default config file
+# default_config = 'default_config.json'
+# with open(default_config) as df_config_file:
+#     DEFAULT_CONFIG = json.load(df_config_file)
+
+# print(DEFAULT_CONFIG)
+
+# # Load current config file
+# current_config = 'config.json'
+# with open(current_config) as current_cfg:
+#     CURRENT_CONFIG = json.load(current_cfg)
+
+# print(CURRENT_CONFIG)
+
+# # Dictionary to save config parameters before dumping to JSON
+# NEW_CONFIG = CURRENT_CONFIG
+
+cfg = ConfigManager()
+
+
+# Dicts of menu options - to avoid using strings in the whole program
 mm_choices = {
     'elemental':'Elemental server - IP and credentials',
     'stream': 'Stream-GPI pairs - number of streams and GPI mapping',
@@ -63,11 +85,65 @@ def elemental_menu():
     ]
 
     elemental_answers = pyq.prompt(elemental_promt)
+    if elemental_answers['elemental'] is el_choices['ip']:
+        NEW_CONFIG['elemental_ip'] = elemental_answers['elemental_ip']
 
-    if elemental_answers['elemental'] is el_choices['back']:
+    elif elemental_answers['elemental'] is el_choices['credentials']:
+        NEW_CONFIG['elemental_user'] = elemental_answers['elemental_user']
+        NEW_CONFIG['elemental_pass'] = elemental_answers['elemental_pass']
+
+    elif elemental_answers['elemental'] is el_choices['back']:
+        print(NEW_CONFIG)
         return EXIT_FLAG
+
     else:
         return 0
+
+
+def stream_menu():
+    stream_num_promt = [
+        {
+            'type': 'input',
+            'name': 'gpi_num',
+            'message': 'Enter the number of GPI-Stream pairs',
+            # 'validate':
+            # 'filter': lambda input: int(input)
+        }
+    ]
+    stream_answers = pyq.prompt(stream_num_promt)
+    num_of_streams = int(stream_answers['gpi_num'])
+
+    gpi_to_stream_map = {}
+    for stream in range(1, num_of_streams+1):
+        gpi_promt = [
+            {
+                'type': 'input',
+                'name': 'gpi_{}'.format(stream),
+                'message': 'Enter the GPI pin for GPI-Stream pair number ({}):'.format(stream),
+                # 'validate': lambda input: not isinstance(input, int) or 'Enter an int value',
+                # 'filter': lambda input: int(input)
+            }
+        ]
+        gpi_answer = pyq.prompt(gpi_promt)
+        gpi_pin = gpi_answer['gpi_{}'.format(stream)]
+
+        stream_promt = [
+            {
+                'type': 'input',
+                'name': 'stream_{}'.format(stream),
+                'message': 'Enter the Elemental event number for GPI ({}):'.format(gpi_pin),
+            }
+        ]
+        stream_answer = pyq.prompt(stream_promt)
+        event_number = stream_answer['stream_{}'.format(stream)]
+
+        gpi_to_stream_map[gpi_pin] = event_number
+    
+    print(gpi_to_stream_map)
+
+    # if stream_answers['back']: return EXIT_FLAG
+
+    return 0
 
 
 def avail_menu():
@@ -120,29 +196,35 @@ def main_menu():
     else:
         return answers
     
+
 def whole_menu():
 
     while(True):
         mm_answers = main_menu()
 
-        if mm_answers['main_option'] is mm_choices['elemental']:
+
+        if mm_answers is EXIT_FLAG:
+            break
+
+        elif mm_answers['main_option'] is mm_choices['elemental']:
             while(True):
                 if elemental_menu() is EXIT_FLAG: break                
 
         elif mm_answers['main_option'] is mm_choices['stream']:
-            print('Perkele!')
+            while(True):
+                if stream_menu() is EXIT_FLAG: break
 
         elif mm_answers['main_option'] is mm_choices['avail']:
             while(True):
                 if avail_menu() is EXIT_FLAG: break
 
-        elif mm_answers['main_option'] is EXIT_FLAG:
-            break
-                
+    return 0
 
 
 if __name__ == '__main__':
     try:
         whole_menu()
     except KeyboardInterrupt:
-        print('Bye bye')
+        print('Will miss you')
+    finally:
+        print('We are done!')

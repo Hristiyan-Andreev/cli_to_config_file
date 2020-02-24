@@ -1,7 +1,7 @@
 {
-    "elemental_ip": "192.168.2.80",
-    "elemental_user": "admin",
-    "elemental_pass": null,
+    "elemental_ip": "1.1.1.1",
+    "elemental_user": "user",
+    "elemental_pass": "pass",
     "gpi_to_stream_map": {
         "15": 5
     },
