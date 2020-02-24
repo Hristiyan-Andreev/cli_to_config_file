@@ -26,6 +26,7 @@ EXIT_FLAG = 123
 # NEW_CONFIG = CURRENT_CONFIG
 
 cfg = ConfigManager()
+cfg.preview_changes()
 
 
 # Dicts of menu options - to avoid using strings in the whole program
