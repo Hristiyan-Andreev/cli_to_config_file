@@ -3,6 +3,7 @@ import sys
 from os.path import getmtime
 import threading as th
 import time
+import logging as log
 
 class WatchDogReload(th.Thread):
     def __init__(self, files_to_watch, check_interval = 2, linux = True):
@@ -27,11 +28,12 @@ class WatchDogReload(th.Thread):
                 if getmtime(f) != mtime:
                     # One of the files has changed, so restart the script.
                     print('--> restarting')
-                    if self.linux:
+                    if self.linux is True:
                     # When running the script via `./daemon.py` (e.g. Linux/Mac OS), use
-                        # os.execv(__file__, sys.argv)
+                        os.execv(__file__, sys.argv)
                         pass
-                    elif not self.linux:
+
+                    elif self.linux is False:
                     # When running the script via `python daemon.py` (e.g. Windows), use
                         os.execv(sys.executable, ['python'] + sys.argv)
         

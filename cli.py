@@ -7,6 +7,20 @@ import validators as val
 from config_manager import ConfigManager
 
 
+# Style from dictionary
+# style_dict = {
+#     pyq.Token.Separator: '#6C6C6C',
+#     pyq.Token.QuestionMark: '#FF9D00 bold',
+#     #pyq.Token.Selected: '',  # default
+#     pyq.Token.Selected: '#5F819D',
+#     pyq.Token.Pointer: '#FF9D00 bold',
+#     pyq.Token.Instruction: '',  # default
+#     pyq.Token.Answer: '#5F819D bold',
+#     pyq.Token.Question: '',
+# }
+# custom_style = pyq.style_from_dict(style_dict)
+
+
 # Used universally through the program as "back one step" flag
 EXIT_FLAG = 123
 
@@ -82,15 +96,15 @@ def main_menu():
 
 
 def main_config_menu():
+    
+    main_options_promt = {
+        'type': 'list',
+        'name': 'main_option',
+        'message': 'What you want to configure?\n',
+        'choices': [main_cfg_choices['elemental'], main_cfg_choices['stream'], \
+                    main_cfg_choices['avail'], main_cfg_choices['back']]
+    }
     while(True):
-        main_options_promt = {
-            'type': 'list',
-            'name': 'main_option',
-            'message': 'What you want to configure?\n',
-            'choices': [main_cfg_choices['elemental'], main_cfg_choices['stream'], \
-                        main_cfg_choices['avail'], main_cfg_choices['back']]
-        }
-
         answers = pyq.prompt(main_options_promt)
 
         if answers['main_option'] is main_cfg_choices['back']:
@@ -107,41 +121,43 @@ def main_config_menu():
 
 
 def elemental_menu():
+    
+    elemental_promt = [
+        {
+            'type': 'list',
+            'name': 'elemental',
+            'message': 'Elemenal Live server options\n',
+            'choices': [el_choices['ip'], el_choices['credentials'], \
+                        el_choices['back']]
+        },
+        {
+            'type': 'input',
+            'name': 'elemental_ip',
+            'message': 'Enter the Elemenal Live server IP address - without port',
+            'validate': val.IpValidator,
+            'when': lambda elemental_answers: elemental_answers['elemental'] \
+                is el_choices['ip'],
+            # 'filter': lambda val: float(val)
+        },
+        {
+            'type': 'input',
+            'name': 'elemental_user',
+            'message': 'Enter Elemental Live username',
+            'when': lambda elemental_answers: elemental_answers['elemental'] \
+                is el_choices['credentials']
+        },
+        {
+            'type': 'password',
+            'name': 'elemental_pass',
+            'message': 'Enter Elemental Live password',
+            'when': lambda elemental_answers: elemental_answers['elemental'] \
+                is el_choices['credentials']
+        }
+    ]
     while(True):
-        elemental_promt = [
-            {
-                'type': 'list',
-                'name': 'elemental',
-                'message': 'Elemenal Live server options\n',
-                'choices': [el_choices['ip'], el_choices['credentials'], \
-                            el_choices['back']]
-            },
-            {
-                'type': 'input',
-                'name': 'elemental_ip',
-                'message': 'Enter the Elemenal Live server IP address - without port',
-                'validate': val.IpValidator,
-                'when': lambda elemental_answers: elemental_answers['elemental'] \
-                    is el_choices['ip'],
-                # 'filter': lambda val: float(val)
-            },
-            {
-                'type': 'input',
-                'name': 'elemental_user',
-                'message': 'Enter Elemental Live username',
-                'when': lambda elemental_answers: elemental_answers['elemental'] \
-                    is el_choices['credentials']
-            },
-            {
-                'type': 'password',
-                'name': 'elemental_pass',
-                'message': 'Enter Elemental Live password',
-                'when': lambda elemental_answers: elemental_answers['elemental'] \
-                    is el_choices['credentials']
-            }
-        ]
 
         elemental_answers = pyq.prompt(elemental_promt)
+
         if elemental_answers['elemental'] is el_choices['ip']:
             cfg.NEW_CONFIG['elemental_ip'] = elemental_answers['elemental_ip']
 
@@ -156,19 +172,20 @@ def elemental_menu():
 
 def stream_menu():
 
+    stream_num_promt = [
+        {
+            'type': 'input',
+            'name': 'gpi_num',
+            'message': 'Enter the number of GPI-Stream pairs',
+            # 'validate':
+            # 'filter': lambda input: int(input)
+        }
+    ]
+
     while(True):
-        stream_num_promt = [
-            {
-                'type': 'input',
-                'name': 'gpi_num',
-                'message': 'Enter the number of GPI-Stream pairs',
-                # 'validate':
-                # 'filter': lambda input: int(input)
-            }
-        ]
+
         stream_answers = pyq.prompt(stream_num_promt)
         num_of_streams = int(stream_answers['gpi_num'])
-
 
         gpi_to_stream_map = {}
         for stream in range(1, num_of_streams+1):
@@ -213,31 +230,31 @@ def stream_menu():
         
 
 def avail_menu():
+    avails_promt = [
+        {
+            'type': 'list',
+            'name': 'avail',
+            'message': 'Avail duration options',
+            'choices': [av_choices['enable'], av_choices['duration'], \
+                        av_choices['back']]
+        },
+        {
+            'type': 'list',
+            'name': 'enable',
+            'message': 'Do you want to enable minimum avail duration',
+            'choices': ['Yes', 'No'],
+            'when': lambda avails: avails['avail'] is av_choices['enable']
+        },
+        {
+            'type': 'input',
+            'name': 'avail_duration',
+            'message': 'Enter the minimum avail duration in seconds',
+            'validate': val.AvDurValidator,
+            'when': lambda avails: avails['avail'] is av_choices['duration'],
+            'filter': lambda val: float(val)
+        }
+    ]
     while(True):
-        avails_promt = [
-            {
-                'type': 'list',
-                'name': 'avail',
-                'message': 'Avail duration options',
-                'choices': [av_choices['enable'], av_choices['duration'], \
-                            av_choices['back']]
-            },
-            {
-                'type': 'list',
-                'name': 'enable',
-                'message': 'Do you want to enable minimum avail duration',
-                'choices': ['Yes', 'No'],
-                'when': lambda avails: avails['avail'] is av_choices['enable']
-            },
-            {
-                'type': 'input',
-                'name': 'avail_duration',
-                'message': 'Enter the minimum avail duration in seconds',
-                'validate': val.AvDurValidator,
-                'when': lambda avails: avails['avail'] is av_choices['duration'],
-                'filter': lambda val: float(val)
-            }
-        ]
 
         avails = pyq.prompt(avails_promt)
 
