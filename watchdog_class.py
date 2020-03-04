@@ -5,6 +5,7 @@ import threading as th
 import time
 import logging as log
 
+
 class WatchDogReload(th.Thread):
     def __init__(self, files_to_watch, check_interval = 2, linux = True):
         '''
@@ -19,6 +20,22 @@ class WatchDogReload(th.Thread):
         self.start_up_edit_times = [(f, getmtime(f)) for f in self.files]
         self.check_interval = check_interval
         self.linux = linux
+        self.logger = self.setup_logger()
+
+
+    def setup_logger(self):
+        path = os.path.join('/','var','log')
+        filename = '{}/{}'.format(path,'reloader.log')
+
+        file_handler = log.FileHandler(filename)
+        file_handler.setLevel(log.DEBUG)
+        file_format = log.Formatter('%(asctime)s - %(threadName) - %(levelname)s - %(message)s')
+        file_handler.setFormatter(file_format)
+
+        self.logger = log.getLogger(__name__)
+        self.logger.addHandler(file_handler)
+        self.logger.setLevel(log.DEBUG)
+
 
     def run(self):
         while True:
@@ -27,7 +44,7 @@ class WatchDogReload(th.Thread):
             for f, mtime in self.start_up_edit_times:
                 if getmtime(f) != mtime:
                     # One of the files has changed, so restart the script.
-                    print('--> restarting')
+                    self.logger.info('Change detected in {} --> Restarting'.format(f))
                     if self.linux is True:
                     # When running the script via `./daemon.py` (e.g. Linux/Mac OS), use
                         os.execv(__file__, sys.argv)
