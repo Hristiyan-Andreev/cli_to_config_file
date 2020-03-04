@@ -29,12 +29,14 @@ class WatchDogReload(th.Thread):
 
         file_handler = log.FileHandler(filename)
         file_handler.setLevel(log.DEBUG)
-        file_format = log.Formatter('%(asctime)s - %(threadName) - %(levelname)s - %(message)s')
+        file_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
         file_handler.setFormatter(file_format)
 
-        self.logger = log.getLogger(__name__)
-        self.logger.addHandler(file_handler)
-        self.logger.setLevel(log.DEBUG)
+        logger = log.getLogger(__name__)
+        logger.addHandler(file_handler)
+        logger.setLevel(log.DEBUG)
+
+        return logger
 
 
     def run(self):
