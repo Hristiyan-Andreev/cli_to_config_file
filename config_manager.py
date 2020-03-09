@@ -9,7 +9,7 @@ class ConfigManager():
         self.cfg_file = cfg_file
         self.default_cfg_file = default_cfg_file
 
-        self.load_default_cfg(self.cfg_file)
+        self.load_default_cfg(self.default_cfg_file)
         self.load_current_cfg(self.cfg_file)
 
         self.NEW_CONFIG = self.CURRENT_CONFIG
