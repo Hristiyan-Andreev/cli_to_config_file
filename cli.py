@@ -1,24 +1,9 @@
-import click as cl
 import PyInquirer as pyq
 import sys
 import json
 
 import validators as val
 from config_manager import ConfigManager
-
-
-# Style from dictionary
-# style_dict = {
-#     pyq.Token.Separator: '#6C6C6C',
-#     pyq.Token.QuestionMark: '#FF9D00 bold',
-#     #pyq.Token.Selected: '',  # default
-#     pyq.Token.Selected: '#5F819D',
-#     pyq.Token.Pointer: '#FF9D00 bold',
-#     pyq.Token.Instruction: '',  # default
-#     pyq.Token.Answer: '#5F819D bold',
-#     pyq.Token.Question: '',
-# }
-# custom_style = pyq.style_from_dict(style_dict)
 
 
 # Used universally through the program as "back one step" flag

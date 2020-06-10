@@ -14,12 +14,7 @@ class AvDurValidator(Validator):
                 )
 
 class IpValidator(Validator):
-    def validate(self, document):
-        # ip_regex = re.compile(r'(\d){1,3}\.(\d){1,3}\.(\d){1,3}\.(\d){1,3}')
-        # ip_pattern = '^(\d){1,3}\.(\d){1,3}\.(\d){1,3}\.(\d){1,3}$'
-        # ip_pattern = '^([0-9]|[0-5]|[0-5]){1,3}\.([0-255]){1,3}\.([0-255]){1,3}\.([0-255]){1,3}$'
-        # ip_ok = re.match(ip_pattern, document.text)
-        
+    def validate(self, document):        
         try:
             ip.ip_address(document.text)
         except ValueError:
